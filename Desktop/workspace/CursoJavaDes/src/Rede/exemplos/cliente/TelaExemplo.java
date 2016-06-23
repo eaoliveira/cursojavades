@@ -28,14 +28,16 @@ public class TelaExemplo extends JFrame implements ActionListener{
 	private JTextField textMessage;
 	private JButton btnEnviar;
 	private JScrollPane scrollPane;
-	private JTextArea textArea;
+	protected JTextArea textArea;
 	private JButton btnConectar;
 	private JButton btnDesconectar;
 	private JButton btnSair;
-	private Socket skt;
-	private BufferedReader in, console;
+	protected Socket skt;
+	protected BufferedReader in, console;
 	private PrintWriter out;
 	private String linha;
+	private Lertexto a;
+	private Thread b;
 	
 	/**
 	 * Launch the application.
@@ -72,6 +74,7 @@ public class TelaExemplo extends JFrame implements ActionListener{
 		contentPane.add(lblNewLabel);
 		
 		textMessage = new JTextField();
+		textMessage.setEnabled(false);
 		textMessage.addActionListener(this);
 		textMessage.setBounds(10, 31, 304, 23);
 		contentPane.add(textMessage);
@@ -108,8 +111,7 @@ public class TelaExemplo extends JFrame implements ActionListener{
 		contentPane.add(btnSair);
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void actionPerformed(ActionEvent ev) {
+		public void actionPerformed(ActionEvent ev) {
 		
 		Object opcao = ev.getSource();
 		try{
@@ -120,7 +122,6 @@ public class TelaExemplo extends JFrame implements ActionListener{
 			// grava no servidor
 			out.println(texto);
 			out.flush();	
-			leLinha();
 		}else if(opcao.equals(btnConectar)){
 			// conectando no servidor
 			skt = new Socket("10.84.144.250", 1234);
@@ -129,13 +130,20 @@ public class TelaExemplo extends JFrame implements ActionListener{
 			// Obtendo o canal de gravaÃ§Ã£o do socket
 			out = new PrintWriter(skt.getOutputStream());
 			// conectanto no canal de leitura da console
-			console = new BufferedReader( new InputStreamReader( System.in ) );
-			leLinha();
+			//console = new BufferedReader( new InputStreamReader( System.in ) );
+		
+			a = new Lertexto();
+			b = new Thread(a);
+			b.start();
+			
+			textMessage.setEnabled(true);
 			btnEnviar.setEnabled(true);
 			btnDesconectar.setEnabled(true);
 			btnConectar.setEnabled(false);
 		}else if (opcao.equals(btnDesconectar)){
+			Lertexto.interrupted();
 			skt.close();
+			textMessage.setEnabled(false);
 			btnConectar.setEnabled(true);
 			btnEnviar.setEnabled(false);
 			btnDesconectar.setEnabled(false);
@@ -145,13 +153,21 @@ public class TelaExemplo extends JFrame implements ActionListener{
 		}catch(Exception e){JOptionPane.showMessageDialog(null, "Não foi possivel conectar" + e);}
 		
     }
-	
-	public void leLinha(){
-		try{
-		// lÃª linha do servidor
-		linha = in.readLine();
-		textArea.setText(textArea.getText() + linha + "\n");
-		}catch(Exception e) {JOptionPane.showMessageDialog(null, "Não foi possivel ler");}
-	}
+		
+		class Lertexto extends Thread {
+			public void run(){
+				try{
+					while (!interrupted()){
+						if (in.ready()){
+							// lÃª linha do servidor
+							String linha = in.readLine();
+							textArea.setText(textArea.getText() + linha + "\n");
+						}else Thread.sleep(5);
+					}
+				}catch(Exception e) {JOptionPane.showMessageDialog(null, "Não foi possivel ler" + e);}}
+		}
 }
+
+	
+
 
