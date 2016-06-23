@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.FlowLayout;
 import javax.swing.JTextField;
@@ -14,9 +15,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.awt.event.ActionEvent;
 
-public class TelaExemplo extends JFrame implements ActionListener {
+public class TelaExemplo extends JFrame implements ActionListener{
 
 	private JPanel contentPane;
 	private JLabel lblNewLabel;
@@ -27,7 +32,11 @@ public class TelaExemplo extends JFrame implements ActionListener {
 	private JButton btnConectar;
 	private JButton btnDesconectar;
 	private JButton btnSair;
-
+	private Socket skt;
+	private BufferedReader in, console;
+	private PrintWriter out;
+	private String linha;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -69,6 +78,7 @@ public class TelaExemplo extends JFrame implements ActionListener {
 		textMessage.setColumns(10);
 		
 		btnEnviar = new JButton("Enviar");
+		btnEnviar.setEnabled(false);
 		btnEnviar.addActionListener(this);
 		btnEnviar.setBounds(324, 31, 89, 23);
 		contentPane.add(btnEnviar);
@@ -87,6 +97,7 @@ public class TelaExemplo extends JFrame implements ActionListener {
 		contentPane.add(btnConectar);
 		
 		btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.setEnabled(false);
 		btnDesconectar.addActionListener(this);
 		btnDesconectar.setBounds(166, 208, 102, 23);
 		contentPane.add(btnDesconectar);
@@ -96,17 +107,51 @@ public class TelaExemplo extends JFrame implements ActionListener {
 		btnSair.setBounds(324, 208, 89, 23);
 		contentPane.add(btnSair);
 	}
+	
+	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent ev) {
 		
 		Object opcao = ev.getSource();
-		
+		try{
 		if (opcao.equals(textMessage)||opcao.equals(btnEnviar)){
-			
+			// le da console
+			//String texto = console.readLine();
+			String texto = textMessage.getText();
+			// grava no servidor
+			out.println(texto);
+			out.flush();	
+			leLinha();
 		}else if(opcao.equals(btnConectar)){
-				
+			// conectando no servidor
+			skt = new Socket("10.84.144.250", 1234);
+			// Obtendo o canal de leitura do socket
+			in = new BufferedReader( new InputStreamReader( skt.getInputStream() ) );
+			// Obtendo o canal de gravaÃ§Ã£o do socket
+			out = new PrintWriter(skt.getOutputStream());
+			// conectanto no canal de leitura da console
+			console = new BufferedReader( new InputStreamReader( System.in ) );
+			leLinha();
+			btnEnviar.setEnabled(true);
+			btnDesconectar.setEnabled(true);
+			btnConectar.setEnabled(false);
 		}else if (opcao.equals(btnDesconectar)){
-			
-		} else {System.exit(0);}
+			skt.close();
+			btnConectar.setEnabled(true);
+			btnEnviar.setEnabled(false);
+			btnDesconectar.setEnabled(false);
+			textArea.setText(null);
+			textMessage.setText(null);
+		} else {System.exit(0);} 
+		}catch(Exception e){JOptionPane.showMessageDialog(null, "Não foi possivel conectar" + e);}
 		
     }
+	
+	public void leLinha(){
+		try{
+		// lÃª linha do servidor
+		linha = in.readLine();
+		textArea.setText(textArea.getText() + linha + "\n");
+		}catch(Exception e) {JOptionPane.showMessageDialog(null, "Não foi possivel ler");}
+	}
 }
+
