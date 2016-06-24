@@ -1,5 +1,4 @@
 package Rede.exemplos.cliente;
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -8,11 +7,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import java.awt.FlowLayout;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -122,9 +119,11 @@ public class TelaExemplo extends JFrame implements ActionListener{
 			// grava no servidor
 			out.println(texto);
 			out.flush();	
+			textMessage.setText(null);
+
 		}else if(opcao.equals(btnConectar)){
 			// conectando no servidor
-			skt = new Socket("10.84.144.250", 1234);
+			skt = new Socket("127.0.0.1", 1234);
 			// Obtendo o canal de leitura do socket
 			in = new BufferedReader( new InputStreamReader( skt.getInputStream() ) );
 			// Obtendo o canal de gravação do socket
