@@ -5,8 +5,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import Rede.exemplos.cliente.TelaExemplo.Lertexto;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Servidor {
 
@@ -32,29 +32,44 @@ public class Servidor {
 
 class Escrever extends Thread {
 	private String linha;
-	public int i=0;
+	public static int i;
+	private static List<PrintWriter> listaCli = new ArrayList<>();
 
 	Socket s;
 
 	public Escrever(Socket s) {
+		i=i+1;
 		this.s = s;
 	}
 
 	public void run() {
+
 		try {
-			i=+1;
+			InputStreamReader is = new InputStreamReader(s.getInputStream());
+			BufferedReader in = new BufferedReader(is);
+			PrintWriter out = new PrintWriter(s.getOutputStream());
+			synchronized (listaCli){
+			listaCli.add(out);}
+			
+			//out.println("Bem vindo:" + s.getInetAddress());
+			out.println("Bem vindo:" + i);
+			out.flush();
+
 			do {
-				InputStreamReader is = new InputStreamReader(s.getInputStream());
-				BufferedReader in = new BufferedReader(is);
-				PrintWriter out = new PrintWriter(s.getOutputStream());
-				//out.println("Bem vindo:" + s.getInetAddress());
-				out.println("Bem vindo:" + i);
-				out.flush();
-				out.println("S:" + in.readLine());
-				out.flush();
 				linha = in.readLine();
+					for(PrintWriter cout : listaCli){
+						synchronized (listaCli) {
+							
+						cout.println(s.getPort()+" : " + linha);
+						cout.flush(); 
+					}
+				}
+
 			} while (!linha.endsWith("SAIR"));
+
 			s.close();
+			synchronized (listaCli){
+			listaCli.remove(out);}
 		} catch (Exception e) {
 		}
 	}
