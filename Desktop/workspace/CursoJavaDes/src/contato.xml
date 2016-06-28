@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE contato SYSTEM "contato.dtd">
+<contato>
+	<pessoa>
+		<nome>Fulano1</nome>
+		<telefone>
+			<ddd>11</ddd>
+			<numero>834928942 </numero>
+			<ramal>11 </ramal>
+		</telefone>
+		<departamento>vendas</departamento>
+		<empresa>fulano sa</empresa>
+	</pessoa>
+	<pessoa>
+		<nome>Joao Ninguem</nome>
+		<telefone>
+			<ddd>21</ddd>
+			<numero>465465652 </numero>
+		</telefone>
+		<departamento>marketing</departamento>
+		<empresa>fulano sa</empresa>
+	</pessoa>
+</contato>

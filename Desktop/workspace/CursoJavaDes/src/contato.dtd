@@ -1,0 +1,9 @@
+<!ELEMENT contato (pessoa+) >
+<!ELEMENT pessoa (nome, telefone, departamento, empresa) >
+<!ELEMENT telefone (ddd, numero, ramal*) >
+<!ELEMENT nome (#PCDATA) >
+<!ELEMENT ddd (#PCDATA) >
+<!ELEMENT numero (#PCDATA) >
+<!ELEMENT ramal (#PCDATA) >
+<!ELEMENT departamento (#PCDATA) >
+<!ELEMENT empresa (#PCDATA) >

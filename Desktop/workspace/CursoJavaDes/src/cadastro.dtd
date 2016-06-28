@@ -1,0 +1,5 @@
+<!ELEMENT cadastro (pessoa+) >
+<!ELEMENT pessoa (nome, email) >
+<!ATTLIST pessoa idade NMTOKEN #REQUIRED >
+<!ELEMENT nome (#PCDATA) >
+<!ELEMENT email (#PCDATA) >
