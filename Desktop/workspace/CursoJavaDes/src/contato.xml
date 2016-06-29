@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="contato.xsl"?>
 <!DOCTYPE contato SYSTEM "contato.dtd">
 <contato>
 	<pessoa>
@@ -19,5 +20,14 @@
 		</telefone>
 		<departamento>marketing</departamento>
 		<empresa>fulano sa</empresa>
+	</pessoa>
+		<pessoa>
+		<nome>hsdfjklsd</nome>
+		<telefone>
+			<ddd>31</ddd>
+			<numero>4556655454</numero>
+		</telefone>
+		<departamento>djskkl</departamento>
+		<empresa>sddfa</empresa>
 	</pessoa>
 </contato>
